@@ -1,19 +1,58 @@
-//var http = require("http"), fs = require('fs');
-var bodyParser = require('body-parser');
 var express = require('express'); 
-var handlebars = require('express-handlebars');
 
 var app = express();
-app.engine('handlebars', handlebars({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
-app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res){
-  res.render('home');
+app.use(express.static('./public'));
+app.use(require('body-parser').urlencoded({ extended: true }));
+var html_dir = './public/';
+
+var albums = [
+  {id:0, name:'Prism Tats', artist:'Prism Tats', release:'2016'},
+  {id:1, name:'Revolver', artist:'The Beatles', release:'1966'},
+  {id:2, name:'London Calling', artist:'The Clash', release:'1979'},
+  {id:3, name:'Discovery', artist:'Daft Punk', release:'2001'}
+];
+
+app.get('/', function(req, res) {
+    res.sendfile(html_dir + 'home.html');
 });
 
-app.get('/about', function(req, res){
-  res.render('about');
+app.get('/about', function(req, res) {
+    res.sendfile(html_dir + 'about.html');
+});
+
+app.post('/search', function(req, res){
+  var album_name = req.body.albumname.toLowerCase();
+  var match_found = false;
+  var counter = 0;
+  var match = {};
+  var result_message = '';
+  while(counter < albums.length && match_found === false){
+    var match_name = albums[counter]['name'].toLowerCase();
+    if(match_name === album_name){
+      console.log('Yay');
+      match = albums[counter];
+      match_found = true;
+    }
+    else{
+      match_found = false;
+      console.log(counter + ' no match yet');
+      counter++;
+    }
+  }
+  if(match.hasOwnProperty('name')){
+    console.log(match);
+    result_message = '<p><strong>Album Name:</strong> ' + match.name + '</p>' 
+    + '<p><strong>Artist:</strong> ' + match.artist + '</p>'
+    + '<p><strong>Release Year:</strong> ' + match.release + '</p>';
+  }
+  else{
+    console.log('no dice');
+    result_message = '<p>No results found</p>'; 
+  }
+  //res.redirect(303, '../search');
+  res.send('<h1>Searching for ' + album_name + '</h1>' + result_message);
+  
 });
 
 app.use(function(req, res){
@@ -33,33 +72,3 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function(){
   console.log('The server is running ' + app.get('port') + '; Press Ctrl-C to terminate.');
 });
-
-/*function serveStatic(res, path, contentType, responseCode){
-  if(!responseCode) responseCode = 200;
-  fs.readFile(__dirname + path, function(err, data){
-      if(err){
-        res.writeHead(500, {'Content-Type': 'text/plain'});
-        res.end('Internal Server Error');
-      }
-      else{
-        res.writeHead(responseCode, {'Content-Type': contentType});
-        res.end(data);
-      }
-  });
-}*/
-
-/*http.createServer(function(req,res){
-  var path = req.url.toLowerCase();
-  switch(path) {
-    case '/': 
-      serveStatic(res, '/public/home.html', 'text/html');
-      break;
-    case '/about':
-      serveStatic(res, '/public/about.html', 'text/html');
-      break;
-    default:
-      res.writeHead(404, {'Content-Type': 'text/plain'});
-      res.end('404:Page not found.');
-  }
-  
-}).listen(process.env.PORT);*/
