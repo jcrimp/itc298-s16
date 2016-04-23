@@ -24,37 +24,31 @@ app.get('/about', function(req, res) {
 
 app.post('/search', function(req, res){
   var album_name = req.body.albumname.toLowerCase();
-  var matches = [];
+  //var matches = [];
   var result_message = '';
+  var headline = '<h1>Searching for '+ req.body.albumname +'</h1>';
+
   
-  //var match_found = false;
-  //var counter = 0;
-  //var match = {};
-  
-  /*while(counter < albums.length && match_found === false){
-    var match_name = albums[counter]['name'].toLowerCase();
-    if(match_name === album_name){
-      console.log('Yay');
-      match = albums[counter];
-      match_found = true;
-    }
-    else{
-      match_found = false;
-      console.log(counter + ' no match yet');
-      counter++;
-    }
+  function matchingAlbum(item){
+    var item_name = item.name.toLowerCase();
+    return item_name === album_name;
   }
-  if(match.hasOwnProperty('name')){
-    console.log(match);
-    result_message = '<p><strong>Album Name:</strong> ' + match.name + '</p>' 
-    + '<p><strong>Artist:</strong> ' + match.artist + '</p>'
-    + '<p><strong>Release Year:</strong> ' + match.release + '</p>';
+  
+  var found = albums.filter(matchingAlbum);
+  
+  if(found.length > 0){
+    found.forEach(function(foundItem){
+        result_message += '<p><strong>Album Name:</strong> ' + foundItem.name + '</p>' 
+    + '<p><strong>Artist:</strong> ' + foundItem.artist + '</p>'
+    + '<p><strong>Release Year:</strong> ' + foundItem.release + '</p>' + '<br />';
+    });
   }
   else{
-    console.log('no dice');
-    result_message = '<p>No results found</p>'; 
-  }*/
-  albums.forEach(function(arrayItem){
+    result_message = 'No results';
+  }
+  res.send(headline + result_message);
+
+  /*albums.forEach(function(arrayItem){
     var match_name = arrayItem.name.toLowerCase();
     if(match_name === album_name){
       matches.push(arrayItem);
@@ -73,8 +67,7 @@ app.post('/search', function(req, res){
     result_message = '<p>No results found</p>';
   }
 
-  //res.redirect(303, '../search');
-  res.send('<h1>Searching for ' + album_name + '</h1>' + result_message);
+  res.send('<h1>Searching for ' + album_name + '</h1>' + result_message);*/
   
 });
 
