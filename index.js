@@ -16,8 +16,24 @@ app.get('/about', function(req, res) {
 });
 
 app.post('/search', function(req, res){
-  var results = albums.findMatchingAlbums(req.body.albumname);
-  res.send(results);
+  var searchResults = albums.findMatchingAlbums(req.body.albumname);
+  res.send(searchResults);
+});
+
+app.post('/add', function(req, res){
+
+  var addResults = albums.addAlbum(req.body.addAlbumName, req.body.addArtist, req.body.addRelease, req.body.addTracks, req.body.addInStock);
+  res.send(addResults);
+});
+
+app.post('/update', function(req, res){
+  var updateResults = albums.findMatchingAlbums(req.body.updateAlbumName, req.body.updateArtist, req.body.updateRelease, req.body.updateTracks, req.body.updateInStock);
+  res.send(updateResults);
+});
+
+app.post('/delete', function(req, res){
+  var deleteResults = albums.deleteAlbum(req.body.deleteAlbumName);
+  res.send(deleteResults);
 });
 
 app.use(function(req, res){
