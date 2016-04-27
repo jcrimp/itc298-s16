@@ -1,121 +1,147 @@
-<h1>HOME PAGE</h1>
-<h2>Search albums</h2>
-<form role="form" action="/search" method="POST">
-    <div>
-        <label for="fieldName">Album Name</label>
-        <div>
-            <input type="text"
-            id="fieldName" name="albumname" required>
-        </div>
-    </div>
-    <div>
-        <div>
-            <button type="submit">Search</button>
-        </div>
-    </div>
-</form>
-
-<h2>Add an album</h2>
-<form role="form" action="/add" method="POST">
-    <div>
-        <label for="addAlbumName">Album Name</label>
-        <div>
-            <input type="text"
-            id="addAlbumName" name="addAlbumName" required>
-        </div>
-    </div>
-    <div>
-        <label for="addArtist">Artist</label>
-        <div>
-            <input type="text"
-            id="addArtist" name="addArtist" required>
-        </div>
-    </div>
-    <div>
-        <label for="addRelease">Release Date</label>
-        <div>
-            <input type="date"
-            id="addRelease" name="addRelease" pattern="\d{1,2}-\d{1,2}-\d{4}" required>
-        </div>
-    </div>
-    <div>
-        <label for="addArtist">Number of Tracks</label>
-        <div>
-            <input type="number"
-            id="addTracks" name="addTracks" min="1" max="100" required>
-        </div>
-    </div>
-    <div>
-        <label>In Stock?</label>
-        <div>
-            <label><input type="radio" name="addInStock" value="true">Yes</label>
-            <label><input type="radio" name="addInStock" value="false">No</label>
-        </div>
-    </div>
-    <div>
-        <div>
-            <button type="submit">Add Album</button>
-        </div>
-    </div>
-</form>
-
-
-<h2>Update an album</h2>
-<form role="form" action="/update" method="POST">
-    <div>
-        <label for="updateAlbumName">Album Name</label>
-        <div>
-            <input type="text"
-            id="updateAlbumName" name="updateAlbumName" required>
-        </div>
-    </div>
-    <div>
-        <label for="updateArtist">Artist</label>
-        <div>
-            <input type="text"
-            id="updateArtist" name="updateArtist" required>
-        </div>
-    </div>
-    <div>
-        <label for="updateRelease">Release Date</label>
-        <div>
-            <input type="date"
-            id="updateRelease" name="updateRelease" required>
-        </div>
-    </div>
-    <div>
-        <label for="updateArtist">Number of Tracks</label>
-        <div>
-            <input type="number"
-            id="updateTracks" name="updateTracks" min="1" max="100" required>
-        </div>
-    </div>
-    <div>
-        <label>In Stock?</label>
-        <div>
-            <label><input type="radio" name="updateInStock" value="true">Yes</label>
-            <label><input type="radio" name="updateInStock" value="false">No</label>
-        </div>
-    </div>
-    <div>
-        <div>
-            <button type="submit">Update Album</button>
-        </div>
-    </div>
-</form>
-
-<h2>Delete an album</h2>
-<form role="form" action="/delete" method="POST">
-    <div>
-        <label for="deleteAlbumName">Album Name</label>
-        <div>
-            <input type="text"
-            id="deleteAlbumName" name="deleteAlbumName" required>
-        </div>
-    </div>
-    <div>
-        <div>
-            <button type="submit">Delete Album</button>
-        </div>
-    </div>
-</form>
+<html>
+    <head>
+        <title>Album List</title>
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+    <h1>HOME PAGE</h1>
+        <!--<h2>Search/Add/Update/Delete Albums</h2>
+        <form role="form" action="/search" method="POST">
+            <div>
+                <label for="fieldName">Album Name</label>
+                <div>
+                    <input type="text"
+                    id="fieldName" name="albumname" required>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <button type="submit">Search</button>
+                </div>
+            </div>
+        </form>-->
+        
+        <h2>Search/Add/Update/Delete Albums</h2>
+        <form role="form" action="" method="POST">
+            <div>
+                <label for="addAlbumName">Album Name</label>
+                <div>
+                    <input type="text"
+                    id="addAlbumName" name="addAlbumName" required>
+                </div>
+            </div>
+            <div>
+                <label for="addArtist">Artist</label>
+                <div>
+                    <input type="text"
+                    id="addArtist" name="addArtist">
+                </div>
+            </div>
+            <div>
+                <label for="addRelease">Release Date</label>
+                <div>
+                    <input type="date"
+                    id="addRelease" name="addRelease" pattern="\d{1,2}-\d{1,2}-\d{4}">
+                </div>
+            </div>
+            <div>
+                <label for="addArtist">Number of Tracks</label>
+                <div>
+                    <input type="number"
+                    id="addTracks" name="addTracks" min="1" max="100">
+                </div>
+            </div>
+            <div>
+                <label>In Stock?</label>
+                <div>
+                    <label><input type="radio" name="addInStock" value="true">Yes</label>
+                    <label><input type="radio" name="addInStock" value="false">No</label>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <button id="search">Search</button>
+                    <button id="add">Add</button>
+                    <button id="delete">Delete</button>
+                </div>
+            </div>
+        </form>
+        
+        
+        <!--<h2>Update an album</h2>
+        <form role="form" action="/update" method="POST">
+            <div>
+                <label for="updateAlbumName">Album Name</label>
+                <div>
+                    <input type="text"
+                    id="updateAlbumName" name="updateAlbumName" required>
+                </div>
+            </div>
+            <div>
+                <label for="updateArtist">Artist</label>
+                <div>
+                    <input type="text"
+                    id="updateArtist" name="updateArtist" required>
+                </div>
+            </div>
+            <div>
+                <label for="updateRelease">Release Date</label>
+                <div>
+                    <input type="date"
+                    id="updateRelease" name="updateRelease" required>
+                </div>
+            </div>
+            <div>
+                <label for="updateArtist">Number of Tracks</label>
+                <div>
+                    <input type="number"
+                    id="updateTracks" name="updateTracks" min="1" max="100" required>
+                </div>
+            </div>
+            <div>
+                <label>In Stock?</label>
+                <div>
+                    <label><input type="radio" name="updateInStock" value="true">Yes</label>
+                    <label><input type="radio" name="updateInStock" value="false">No</label>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <button type="submit">Update Album</button>
+                </div>
+            </div>
+        </form>-->
+        
+        <!--<h2>Delete an album</h2>
+        <form role="form" action="/delete" method="POST">
+            <div>
+                <label for="deleteAlbumName">Album Name</label>
+                <div>
+                    <input type="text"
+                    id="deleteAlbumName" name="deleteAlbumName" required>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <button type="submit">Delete Album</button>
+                </div>
+            </div>
+        </form-->
+        
+    </body>
+    <script>
+        $(document).ready(function(){
+            $('#search').on('click', function(){
+                //var $this = $(this);
+                $("form").attr("action", '/search');
+            });
+            $('#add').on('click', function(){
+                //var $this = $(this);
+                $("form").attr("action", '/add');
+            });
+            $('#delete').on('click', function(){
+                $("form").attr("action", '/delete')
+            });
+        });
+    </script>
+</html>

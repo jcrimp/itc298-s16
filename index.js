@@ -16,7 +16,7 @@ app.get('/about', function(req, res) {
 });
 
 app.post('/search', function(req, res){
-  var searchResults = albums.findMatchingAlbums(req.body.albumname);
+  var searchResults = albums.findMatchingAlbums(req.body.addAlbumName);
   res.send(searchResults);
 });
 
@@ -26,13 +26,13 @@ app.post('/add', function(req, res){
   res.send(addResults);
 });
 
-app.post('/update', function(req, res){
-  var updateResults = albums.findMatchingAlbums(req.body.updateAlbumName, req.body.updateArtist, req.body.updateRelease, req.body.updateTracks, req.body.updateInStock);
+/*app.post('/update', function(req, res){
+  var updateResults = albums.updateAlbum(req.body.updateAlbumName, req.body.updateArtist, req.body.updateRelease, req.body.updateTracks, req.body.updateInStock);
   res.send(updateResults);
-});
+});*/
 
 app.post('/delete', function(req, res){
-  var deleteResults = albums.deleteAlbum(req.body.deleteAlbumName);
+  var deleteResults = albums.deleteAlbum(req.body.addAlbumName);
   res.send(deleteResults);
 });
 
