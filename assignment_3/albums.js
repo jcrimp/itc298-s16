@@ -1,12 +1,12 @@
 var albums = [
-  {name:"Prism Tats", artist:"Prism Tats", release: "2016-04-18", tracksNum: 9, inStock: true, slug:"prism-tats"},
-  {name:"Revolver", artist:"The Beatles", release:"1966-08-05", tracksNum: 12, inStock: false, slug:"revolver"},
-  {name:"London Calling", artist:"The Clash", release:"1979-12-14", tracksNum: 10, inStock: true, slug:"london-calling"},
-  {name:"Discovery", artist:"Daft Punk", release:"2001-02-26", tracksNum: 13, inStock: true, slug:"discovery"}, 
+  {name:"Prism Tats", artist:"Prism Tats", release: "2016-04-18", tracksNum: 9, inStock: true},
+  {name:"Revolver", artist:"The Beatles", release:"1966-08-05", tracksNum: 12, inStock: false},
+  {name:"London Calling", artist:"The Clash", release:"1979-12-14", tracksNum: 10, inStock: true},
+  {name:"Discovery", artist:"Daft Punk", release:"2001-02-26", tracksNum: 13, inStock: true}, 
   /*{id:4, name:'Discovery', artist:'Fake Artist', release:'2101-07-22', tracksNum: 2, inStock: false}*/
 ];
 
-/*function listAllAlbums(){
+function listAllAlbums(){
   var list = "";
   albums.forEach(function(album){
     list += '<p><strong>Album Name:</strong> ' + album.name + '</p>' 
@@ -16,18 +16,7 @@ var albums = [
       + '<p><strong>In Stock:</strong> ' + album.inStock + '</p>'+ '<br />';
   });
   return list;
-}*/
-
-exports.getAllAlbums = function(){
-  return albums;
-};
-
-exports.getSingleAlbum = function(albumToFind){
-  return albums.find(function(album){
-     return album.slug === albumToFind;
-  });
-  //return foundAlbum;
-};
+}
 
 exports.findMatchingAlbums = function(searchAlbum){
     var resultMessage = '<h1>Searching for '+ searchAlbum +'</h1>';

@@ -1,5 +1,4 @@
 var express = require('express'); 
-var exphbs = require('express-handlebars');
 
 var app = express();
 
@@ -7,33 +6,13 @@ app.use(express.static('./public'));
 app.use(require('body-parser').urlencoded({ extended: true }));
 var html_dir = './public/';
 var albums = require('./lib/albums.js');
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
 
-/*app.get('/', function(req, res) {
+app.get('/', function(req, res) {
     res.sendfile(html_dir + 'home.html');
-});*/
-
-app.get('/', function(req, res){
-  var listAlbums = albums.getAllAlbums();
-  
-  var names = [];
-  listAlbums.forEach(function(album){
-    names.push(album.name);
-  });
-  res.render('home', {albums:listAlbums});
 });
 
-app.get('/album/:myAlbum', function(req, res){
-  var item = req.params.myAlbum;
-  //console.log(item);
-  var foundItem = albums.getSingleAlbum(item);
-  //console.log(foundItem);
-  res.render('detail', {foundItem});
-});
-
-app.get('/about', function(req, res){
-  res.render('about');
+app.get('/about', function(req, res) {
+    res.sendfile(html_dir + 'about.html');
 });
 
 app.post('/search', function(req, res){

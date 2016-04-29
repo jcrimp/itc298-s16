@@ -1,0 +1,12 @@
+body{
+    font-family: 'Helvetica', sans-serif;
+}
+
+header{
+    background: #fff8f4;
+    padding: 12px;
+}
+
+.list-album{
+    border-bottom: 1px solid #dbdbdb;
+}
