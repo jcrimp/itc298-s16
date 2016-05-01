@@ -1,12 +1,14 @@
 <h1>MASTER VIEW</h1>
 <p>Check out this list.</p>
-
+<ul class='main-list'>
     {{#each albums}}
-    <div class="list-album">
-        <a href="album/{{slug}}"><p><strong>{{name}}: </strong>{{artist}}</p></a>
-        {{#if inStock}}
-        <p>Now in Stock!</p>
-        {{/if}}
-    </div>
+    <li class="list-album">
+        <div>
+            <a href="album/{{slug}}"><p><strong>{{name}}: </strong>{{artist}}</p></a>
+            {{#if inStock}}
+            <p>Now in Stock!</p>
+            {{/if}}
+        </div>
+    </li>
     {{/each}}
-    
+ </ul>  

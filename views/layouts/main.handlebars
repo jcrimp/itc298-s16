@@ -11,19 +11,48 @@
 
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
+        <link href="/style.css" type="text/css" rel="stylesheet" />
         
         
         <!--<script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>-->
     </head>
     <body>
-        <header>
+        <header class="container-fluid">
             <h1>Jenny's ITC298 Album List Application</h1>
         </header>
-        <div class="main">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                      </button>
+                      <a class="navbar-brand" href="/">Brand</a>
+                </div>
+                
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                    <form class="navbar-form navbar-right" role="search" action="/search" method="POST">
+                          <div class="form-group">
+                                <input type="text" class="form-control" name="searchAlbumName" id="searchAlbumName" placeholder="search albums">
+                          </div>
+                          <button type="submit" class="btn btn-default">submit</button>
+                    </form>
+
+                </div>
+                
+            </div>
+        </nav>
+        <div class="main container">
             {{{body}}}
         </div>
-        <footer>
+        <footer class="container-fluid">
             {{! super-secret comment }}
             <p>&copy; 2016 Jenny Crimp</p>
         </footer>
@@ -31,6 +60,5 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <link href="style.css" type="text/css" rel="stylesheet" />
     </body>
 </html>

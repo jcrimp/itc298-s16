@@ -37,8 +37,13 @@ app.get('/about', function(req, res){
 });
 
 app.post('/search', function(req, res){
-  var searchResults = albums.findMatchingAlbums(req.body.addAlbumName);
-  res.send(searchResults);
+  //var searchResults = albums.findMatchingAlbums(req.body.searchAlbumName);
+  //res.send(searchResults);
+  var itemToSearch = req.body.searchAlbumName;
+  res.locals.search = req.body.searchAlbumName;
+  var foundAlbum = albums.findMatchingAlbums(itemToSearch);
+  console.log(foundAlbum);
+  res.render('search', {foundAlbum});
 });
 
 app.post('/add', function(req, res){
