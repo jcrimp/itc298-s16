@@ -10,25 +10,14 @@ var albums = require('./lib/albums.js');
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-/*app.get('/', function(req, res) {
-    res.sendfile(html_dir + 'home.html');
-});*/
-
 app.get('/', function(req, res){
   var listAlbums = albums.getAllAlbums();
-  
-  var names = [];
-  listAlbums.forEach(function(album){
-    names.push(album.name);
-  });
-  res.render('home', {albums:listAlbums});
+  res.render('home', {listAlbums});
 });
 
 app.get('/album/:myAlbum', function(req, res){
   var item = req.params.myAlbum;
-  //console.log(item);
   var foundItem = albums.getSingleAlbum(item);
-  //console.log(foundItem);
   res.render('detail', {foundItem});
 });
 
@@ -37,19 +26,25 @@ app.get('/about', function(req, res){
 });
 
 app.post('/search', function(req, res){
-  //var searchResults = albums.findMatchingAlbums(req.body.searchAlbumName);
-  //res.send(searchResults);
-  var itemToSearch = req.body.searchAlbumName;
   res.locals.search = req.body.searchAlbumName;
-  var foundAlbum = albums.findMatchingAlbums(itemToSearch);
-  console.log(foundAlbum);
+  var foundAlbum = albums.findMatchingAlbums(req.body.searchAlbumName);
   res.render('search', {foundAlbum});
 });
 
 app.post('/add', function(req, res){
-
-  var addResults = albums.addAlbum(req.body.addAlbumName, req.body.addArtist, req.body.addRelease, req.body.addTracks, req.body.addInStock);
-  res.send(addResults);
+  //check if album is already in array
+  var found = albums.findMatchingAlbums(req.body.addAlbumName);
+  if(found){
+  //if it is, set success check to false
+  res.locals.success = false;
+  }
+  else{
+  //if not, set success check to true
+  res.locals.success = true;
+  }
+  res.locals.addname = req.body.addAlbumName;
+  var albumAdded = albums.addAlbum(req.body);
+  res.render('add', {albumAdded});
 });
 
 /*app.post('/update', function(req, res){
