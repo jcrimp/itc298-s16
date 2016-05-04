@@ -18,5 +18,7 @@ $(document).ready(function(){
     $(".show-form-button").click(function(){
         $(this).addClass("hide");
         $(".add-form").toggleClass('hide');
+        $(".update-form").removeClass('hide');
     });
+    
 });

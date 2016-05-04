@@ -3,22 +3,45 @@ var exphbs = require('express-handlebars');
 
 var app = express();
 
-app.use(express.static('./public'));
+app.use(express.static('public'));
 app.use(require('body-parser').urlencoded({ extended: true }));
-var html_dir = './public/';
+//var html_dir = './public/';
 var albums = require('./lib/albums.js');
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
+
+function getCurrentYear(){
+  var today = new Date();
+  var thisYear = today.getFullYear();
+  return {year:thisYear};
+}
+
+app.use(function(req, res, next){
+        if(!res.locals.partials) res.locals.partials = {};
+        res.locals.partials.currentYear = getCurrentYear();
+        next();
+});
 
 app.get('/', function(req, res){
   var listAlbums = albums.getAllAlbums();
   res.render('home', {listAlbums});
 });
 
+
+
 app.get('/album/:myAlbum', function(req, res){
   var item = req.params.myAlbum;
   var foundItem = albums.getSingleAlbum(item);
-  res.render('detail', {foundItem});
+  if(foundItem){
+    res.render('detail', {foundItem});
+    console.log(foundItem);
+  }
+  else{
+    res.type('text/plain');
+  res.status(404);
+  res.send('404 - Page not found');
+  }
+  //res.render('detail', {foundItem});
 });
 
 app.get('/about', function(req, res){
@@ -44,17 +67,23 @@ app.post('/add', function(req, res){
   }
   res.locals.addname = req.body.addAlbumName;
   var albumAdded = albums.addAlbum(req.body);
+  console.log(albumAdded);
   res.render('add', {albumAdded});
 });
 
-/*app.post('/update', function(req, res){
-  var updateResults = albums.updateAlbum(req.body.updateAlbumName, req.body.updateArtist, req.body.updateRelease, req.body.updateTracks, req.body.updateInStock);
-  res.send(updateResults);
-});*/
+app.post('/update', function(req, res){
+  var foundItem = albums.updateAlbum(req.body);
+  if(foundItem){
+    res.locals.updateSuccess = true;
+  }
+  res.render('detail', {foundItem});
+});
 
 app.post('/delete', function(req, res){
-  var deleteResults = albums.deleteAlbum(req.body.addAlbumName);
-  res.send(deleteResults);
+  //console.log(req.body.deleteAlbumName);
+  res.locals.deletedAlbum = req.body.deleteAlbumName;
+  res.locals.deleteSuccess = albums.deleteAlbum(req.body.deleteAlbumName);
+  res.render('delete');
 });
 
 app.use(function(req, res){

@@ -35,3 +35,8 @@ footer p{
 .hide{
     display: none;
 }
+
+
+.invisible{
+    visibility: hidden;
+}
