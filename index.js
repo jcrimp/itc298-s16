@@ -1,7 +1,7 @@
 var express = require('express'); 
 var exphbs = require('express-handlebars');
-
 var app = express();
+
 
 app.use(express.static('public'));
 app.use(require('body-parser').urlencoded({ extended: true }));
@@ -15,6 +15,7 @@ app.set('port', process.env.PORT || 3000);
 app.listen(app.get('port'), function(){
   console.log('The server is running ' + app.get('port') + '; Press Ctrl-C to terminate.');
 });
+
 
 function getCurrentYear(){
   var today = new Date();
