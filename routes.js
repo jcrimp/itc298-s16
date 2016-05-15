@@ -1,7 +1,7 @@
 module.exports = function(app){
     var albums = require('./lib/albums.js');
     
-    var Album = require('./models/album.js');
+    //var Album = require('./models/album.js');
     
     app.get('/', function(req, res){
         var listAlbums = albums.getAllAlbums();
@@ -28,17 +28,17 @@ module.exports = function(app){
     });
     
     app.post('/search', function(req, res){
-        Album.find({name: req.body.searchAlbumName}, function(err, album){
+        /*Album.find({name: req.body.searchAlbumName}, function(err, album){
             if(err) throw err;
             console.log(album);
-        });
+        });*/
         res.locals.search = req.body.searchAlbumName;
         var foundAlbum = albums.findMatchingAlbums(req.body.searchAlbumName);
         res.render('search', {foundAlbum});
     });
     
     app.post('/add', function(req, res){
-        var newAlbum = Album({
+        /*var newAlbum = Album({
         name: 'Lemonade',
         artist: 'Beyonce',
         release: new Date('2016-04-43'),
@@ -51,7 +51,7 @@ module.exports = function(app){
                 throw err;
             }
             console.log('New album created!');
-        });
+        });*/
         
         //check if album is already in array
         var found = albums.findMatchingAlbums(req.body.addAlbumName);
