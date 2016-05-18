@@ -1,11 +1,27 @@
 module.exports = function(app){
-    var albums = require('./lib/albums.js');
-    
-    //var Album = require('./models/album.js');
+    var Album = require('./models/album.js');
     
     app.get('/', function(req, res){
-        var listAlbums = albums.getAllAlbums();
-        res.render('home', {listAlbums});
+        //var listAlbums = albums.getAllAlbums();
+        Album.find({}, function(err, albums){
+            if(err) throw err;
+            //console.log(albums.length);
+            var context = {
+                albums: albums.map(function(album){
+                    return {
+                        id: album._id, 
+                        name: album.name,
+                        artist: album.artist,
+                        release: album.release,
+                        tracksNum: album.tracksNum,
+                        inStock: album.inStock,
+                        slug: album.slug
+                    }
+                })
+            };
+            res.render('home', context);
+        });
+        
     });
     
     app.get('/about', function(req, res){
@@ -14,44 +30,25 @@ module.exports = function(app){
     
     app.get('/album/:myAlbum', function(req, res){
         var item = req.params.myAlbum;
-        var foundItem = albums.getSingleAlbum(item);
-        if(foundItem){
-          res.render('detail', {foundItem});
-          console.log(foundItem);
-        }
-        else{
-          res.type('text/plain');
-        res.status(404);
-        res.send('404 - Page not found');
-        }
-        //res.render('detail', {foundItem});
+        
+        Album.findOne({slug:item}, function(err, album){
+            if(err) throw err;
+            console.log(album);
+            res.render('detail', {album});
+        });
     });
     
     app.post('/search', function(req, res){
-        /*Album.find({name: req.body.searchAlbumName}, function(err, album){
-            if(err) throw err;
-            console.log(album);
-        });*/
         res.locals.search = req.body.searchAlbumName;
-        var foundAlbum = albums.findMatchingAlbums(req.body.searchAlbumName);
-        res.render('search', {foundAlbum});
+        var searchSlug = req.body.searchAlbumName.toLowerCase().replace(" ", "-");
+        Album.findOne({ slug: searchSlug }, function(err, album){
+            if(err) throw err;
+            //console.log(album);
+            res.render('search', {album});
+        });
     });
     
     app.post('/add', function(req, res){
-        /*var newAlbum = Album({
-        name: 'Lemonade',
-        artist: 'Beyonce',
-        release: new Date('2016-04-43'),
-        tracksNum: 13,
-        inStock: true
-        });
-    
-        newAlbum.save(function(err){
-            if(err){
-                throw err;
-            }
-            console.log('New album created!');
-        });*/
         
         //check if album is already in array
         var found = albums.findMatchingAlbums(req.body.addAlbumName);

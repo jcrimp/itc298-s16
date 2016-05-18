@@ -1,4 +1,4 @@
-/*exports.testDB = function(){
+exports.testDB = function(){
     var Album = require('./models/album.js');
     
     new Album({
@@ -37,4 +37,4 @@
         });
         
     });
-};*/
+};

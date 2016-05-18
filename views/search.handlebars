@@ -1,10 +1,10 @@
 <h2>Search Results for "{{search}}"</h2>
-{{#if foundAlbum}}
-<h3>{{foundAlbum.name}} by {{foundAlbum.artist}}</h3>
-{{#if foundAlbum.inStock}}
+{{#if album}}
+<h3>{{album.name}} by {{album.artist}}</h3>
+{{#if album.inStock}}
 <p>Now in stock!</p>
 {{/if}}
-<a href="/album/{{foundAlbum.slug}}">View Details</a>
+<a href="/album/{{album.slug}}">View Details</a>
 {{else}}
 <p>Sorry, no albums found.</p>
 {{/if}}
