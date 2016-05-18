@@ -1,0 +1,42 @@
+body{
+    font-family: 'Helvetica', sans-serif;
+}
+
+header{
+    background: #fff8f4;
+    padding: 12px;
+}
+
+.main-list{
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.list-album{
+    border-bottom: 1px solid #dbdbdb;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.list-album:last-of-type{
+    border-bottom: none;
+}
+
+footer{
+    background: #fff8f4;
+    padding: 8px;
+}
+
+footer p{
+    margin:0;
+}
+
+.hide{
+    display: none;
+}
+
+
+.invisible{
+    visibility: hidden;
+}
