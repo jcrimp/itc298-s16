@@ -13,7 +13,8 @@
 {{/if}}
 <p><button type="button" class="btn btn-default show-form-button">Update</button></p>
 <form role="form" action="/update" method="POST" class="update-form form-horizontal hide">
-    <div class="form-group hide">
+    <input type="hidden" name="id" value="{{album._id}}" />
+    <div class="form-group">
         <label for="addAlbumName" class="col-sm-2">Album Name</label>
         <div class="col-sm-10">
             <input type="text"

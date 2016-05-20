@@ -33,45 +33,76 @@ module.exports = function(app){
         
         Album.findOne({slug:item}, function(err, album){
             if(err) throw err;
-            console.log(album);
-            res.render('detail', {album});
+            if(album){
+                console.log(album);
+                res.render('detail', {album});
+            }
+            else{
+                res.status(404).render('404');
+            }
         });
     });
     
     app.post('/search', function(req, res){
-        res.locals.search = req.body.searchAlbumName;
-        var searchSlug = req.body.searchAlbumName.toLowerCase().replace(" ", "-");
-        Album.findOne({ slug: searchSlug }, function(err, album){
+        var searchName = req.body.searchAlbumName;
+        res.locals.search = searchName;
+        var myPattern = new RegExp(searchName, 'i');
+        Album.findOne({name:{$regex:myPattern}}, function(err, album){
             if(err) throw err;
-            //console.log(album);
+            console.log(album);
             res.render('search', {album});
         });
     });
     
-    app.post('/add', function(req, res){
-        
-        //check if album is already in array
-        var found = albums.findMatchingAlbums(req.body.addAlbumName);
-        if(found){
-        //if it is, set success check to false
-        res.locals.success = false;
-        }
-        else{
-        //if not, set success check to true
-        res.locals.success = true;
-        }
-        res.locals.addname = req.body.addAlbumName;
-        var albumAdded = albums.addAlbum(req.body);
-        console.log(albumAdded);
-        res.render('add', {albumAdded});
+    app.post('/add', function(req, res){       
+        var albumNameToAdd = req.body.addAlbumName.toString();
+        var myPattern = new RegExp(albumNameToAdd, 'i');
+        //first, search for the album that's being added to see if it's already there
+        Album.findOne({name: {$regex:myPattern}}, function(err, album){
+            if(err) throw err;
+            //if it is already there, set add success message to false, and render the template with the existing album name
+            if(album){
+                res.locals.success = false;
+                res.render('add', {album});
+            }
+            //if it's not already there, set add success message to true, add the new album, and render the 
+            else{
+                res.locals.success = true;
+                var newAlbum = new Album({
+                    name: req.body.addAlbumName, 
+                    artist:req.body.addArtist,
+                    release: req.body.addRelease,
+                    tracksNum: req.body.addTracks,
+                    slug: albumNameToAdd.toLowerCase().replace(" ", "-")
+                }).save(function(err, album){
+                    if(err) throw err;
+                    console.log(album);
+                    res.render('add', {album});
+                });
+            }
+        })
     });
     
     app.post('/update', function(req, res){
-        var foundItem = albums.updateAlbum(req.body);
-        if(foundItem){
-          res.locals.updateSuccess = true;
+//        var foundItem = albums.updateAlbum(req.body);
+//        if(foundItem){
+//          res.locals.updateSuccess = true;
+//        }
+//        res.render('detail', {foundItem});
+        
+        //check if body has id
+        if(req.body.id){
+            //if it does, set update success message to true, update the document with that id, and render detail page with the updated document.
+            res.locals.updateSuccess = true;
+            
         }
-        res.render('detail', {foundItem});
+        else{
+            
+            //if it doesn't, set update success message to false, and render detail page again with found result for that id 
+        }
+        
+        
+        
     });
     
     app.post('/delete', function(req, res){

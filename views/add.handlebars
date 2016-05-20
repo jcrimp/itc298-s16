@@ -1,6 +1,6 @@
 {{#if success}}
-<h3>{{albumAdded.name}} added successfully</h3>
+<h3>{{album.name}} added successfully</h3>
 {{else}}
-<p>Unable to add {{addname}}. This album already exists.</p>
+<p>Unable to add {{album.name}}. This album already exists.</p>
 {{/if}}
-<a href="/album/{{albumAdded.slug}}">View Details</a>
+<a href="/album/{{album.slug}}">View Details</a>

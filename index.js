@@ -34,9 +34,9 @@ app.use(function(req, res, next){
 require('./routes.js')(app);
 
 app.use(function(req, res){
-  res.type('text/plain');
+  //res.type('text/plain');
   res.status(404);
-  res.send('404 - Page not found');
+  res.render('404');
 });
 
 app.use(function(err, req, res, next){
