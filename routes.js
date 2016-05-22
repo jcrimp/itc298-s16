@@ -34,7 +34,8 @@ module.exports = function(app){
         Album.findOne({slug:item}, function(err, album){
             if(err) throw err;
             if(album){
-                console.log(album);
+                //console.log(album);
+                //console.log(album.release.getDate());
                 res.render('detail', {album});
             }
             else{

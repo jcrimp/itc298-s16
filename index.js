@@ -1,5 +1,19 @@
 var express = require('express'); 
-var exphbs = require('express-handlebars');
+var exphbs = require('express-handlebars').create({
+    defaultLayout: 'main', 
+    helpers: {
+        shortDate: function(theDate){
+            var theMonth = (theDate.getMonth()+1 < 10) ? '0' + (theDate.getMonth()+1) : (theDate.getMonth()+1);
+            var theDay = (theDate.getDate() < 10 ) ? '0' + theDate.getDate() : theDate.getDate();
+            return theDate.getFullYear() + '-' + theMonth + '-' + theDay;
+        }, 
+        prettyDate: function(theDate){
+            var theMonth = (theDate.getMonth()+1 < 10) ? '0' + (theDate.getMonth()+1) : (theDate.getMonth()+1);
+            var theDay = (theDate.getDate() < 10 ) ? '0' + theDate.getDate() : theDate.getDate();
+            return theMonth + '/' + theDay + '/' + theDate.getFullYear();
+        }
+    }
+});
 var app = express();
 
 
@@ -8,7 +22,7 @@ app.use(require('body-parser').urlencoded({ extended: true }));
 app.use('/api', require('cors')());
 //var html_dir = './public/';
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs.engine);
 app.set('view engine', 'handlebars');
 
 app.set('port', process.env.PORT || 3000);
