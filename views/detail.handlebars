@@ -1,10 +1,14 @@
 {{#if updateSuccess}}
 <h2>Update Successful!</h2>
 {{/if}}
+{{#if alreadyExists}}
+<h2>Update failed</h2>
+<p>Al album with that name already exists. To change the album name, please choose a unique name.</p>
+{{/if}}
 <h2>Album Details</h2>
 <h3>{{album.name}}</h3>
 <p>Artist: {{album.artist}}</p>
-<p>Release Date: {{prettyDate album.release}}</p>
+<p>Release Date: {{#if album.release}}{{prettyDate album.release}}{{/if}}</p>
 <p>Number of Tracks: {{album.tracksNum}}</p>
 {{#if album.inStock}}
 <p>Now in stock!</p>
@@ -32,7 +36,7 @@
         <label for="addRelease" class="col-sm-2">Release Date</label>
         <div class="col-sm-3">
             <input type="date"
-            id="addRelease" name="addRelease" pattern="\d{1,2}-\d{1,2}-\d{4}" class="form-control" value="{{shortDate album.release}}">
+            id="addRelease" name="addRelease" pattern="\d{1,2}-\d{1,2}-\d{4}" class="form-control" value="{{#if album.release}}{{shortDate album.release}}{{/if}}">
         </div>
     </div>
     <div class="form-group">
@@ -56,13 +60,7 @@
     </div>
 </form>
 <form role="form" action="/delete" method="POST" class="delete-form form-horizontal">
-    <div class="form-group hide">
-        <label for="deleteAlbumName" class="col-sm-2">Album Name</label>
-        <div class="col-sm-10">
-            <input type="text"
-            id="deleteAlbumName" name="deleteAlbumName" class="form-control" value="{{album.name}}" required>
-        </div>
-    </div>
+    <input type="hidden" name="deleteId" value="{{album._id}}" />
     <div class="form-group">
         <div class="col-sm-10">
             <p><input type="submit" class="btn btn-danger" id="delete" value="Delete"/></p>

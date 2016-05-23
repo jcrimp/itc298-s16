@@ -2,10 +2,8 @@ module.exports = function(app){
     var Album = require('./models/album.js');
     
     app.get('/', function(req, res){
-        //var listAlbums = albums.getAllAlbums();
         Album.find({}, function(err, albums){
             if(err) throw err;
-            //console.log(albums.length);
             var context = {
                 albums: albums.map(function(album){
                     return {
@@ -34,8 +32,7 @@ module.exports = function(app){
         Album.findOne({slug:item}, function(err, album){
             if(err) throw err;
             if(album){
-                //console.log(album);
-                //console.log(album.release.getDate());
+                console.log(album);
                 res.render('detail', {album});
             }
             else{
@@ -74,10 +71,11 @@ module.exports = function(app){
                     artist:req.body.addArtist,
                     release: req.body.addRelease,
                     tracksNum: req.body.addTracks,
+                    inStock: req.body.addInStock,
                     slug: albumNameToAdd.toLowerCase().replace(" ", "-")
                 }).save(function(err, album){
                     if(err) throw err;
-                    console.log(album);
+                    //console.log(album);
                     res.render('add', {album});
                 });
             }
@@ -85,55 +83,85 @@ module.exports = function(app){
     });
     
     app.post('/update', function(req, res){
-//        var foundItem = albums.updateAlbum(req.body);
-//        if(foundItem){
-//          res.locals.updateSuccess = true;
-//        }
-//        res.render('detail', {foundItem});
-        
         //check if body has id
         if(req.body.id){
-            //if it does, set update success message to true, update the document with that id, and render detail page with the updated document.
-            res.locals.updateSuccess = true;
-            
+            //if body has id, make sure addAlbumName doesn't already exist in a document other than the current one.
+            var albumNameToAdd = req.body.addAlbumName.toString();
+            var myPattern = new RegExp(albumNameToAdd, 'i');
+            Album.findOne({_id: {$ne:req.body.id}, name: {$regex:myPattern}}, function(err, album){
+                if(err) throw err;
+                if(album){
+                    //if it is already there, set alreadyExists to true, and render the template with the old album name
+                    res.locals.alreadyExists = true;
+                    Album.findOne({_id:req.body.id}, function(err, album){
+                        if(err) throw err;
+                        res.render('detail', {album});
+                    }); 
+                }
+                else{
+                //if addAlbumName doesn't already exist, set update success message to true, update the document with that id, and render detail page with the updated document.
+                res.locals.updateSuccess = true;
+                Album.findOne({_id:req.body.id}, function(err, album){
+                    if(err) throw err;
+                    album.name = req.body.addAlbumName; 
+                    album.artist = req.body.addArtist;
+                    album.release =  req.body.addRelease;
+                    album.tracksNum = req.body.addTracks;
+                    album.inStock = req.body.addInStock;
+                    album.slug = albumNameToAdd.toLowerCase().replace(" ", "-");
+                    album.save(function(err){
+                        if(err) throw err;
+                        console.log(album);
+                        res.render('detail', {album});
+                    });
+                });
+            }
+        });
         }
         else{
-            
-            //if it doesn't, set update success message to false, and render detail page again with found result for that id 
-        }
-        
-        
-        
+            //if body doesn't have ID, you shouldn't have even gotten this far. 404 error.
+            res.type('text/plain');
+            res.status(404).send('404 - There was a problem updating the data');
+        } 
     });
     
     app.post('/delete', function(req, res){
-        //console.log(req.body.deleteAlbumName);
-        res.locals.deletedAlbum = req.body.deleteAlbumName;
-        res.locals.deleteSuccess = albums.deleteAlbum(req.body.deleteAlbumName);
-        res.render('delete');
+        Album.findById(req.body.deleteId, function(err, album){
+            if(err) throw err;
+            album.remove(function(err){
+                if(err) throw err;
+                res.locals.deleteSuccess = true;
+                res.locals.deletedAlbum = album.name;
+                res.render('delete');
+            });
+        });
     });
     
     
     // API ROUTES
-    app.get('/api/albums', function(req, res){
-        var allAlbums = albums.getAllAlbums();
-        if(allAlbums){
-          res.json(allAlbums);
-        }
-        else{
-          res.status(404).send('404 - No Data');
-        }
+    app.get('/api/albums', function(req, res){       
+        Album.find({}, function(err, albums){
+            if(err) throw err;
+            if(albums){
+                res.json(albums);
+            }
+            else{
+                res.status(404).send('404 - No Data');
+            }
+        });
     });
     
-    app.get('/api/album/:anAlbum', function(req, res){
-        var foundItem = albums.getSingleAlbum(req.params.anAlbum);
-        if(foundItem){
-          res.json(foundItem);
-        }
-        else{
-          res.type('text/plain');
-          res.status(404).send('404 - Page not found');
-        }
+    app.get('/api/album/:anAlbum', function(req, res){ 
+        Album.findOne({slug:req.params.anAlbum}, function(err, album){
+            if(err) throw err;
+            if(album){
+                res.json(album);
+            }
+            else{
+                res.type('text/plain');
+                res.status(404).send('404 - Page not found');
+            }
+        });
     });
 
 };
