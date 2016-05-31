@@ -1,0 +1,59 @@
+body{
+    background-color: #343C42;
+    color: #ffffff;
+}
+
+h1,
+h2,
+h3{
+    color: #FBB31B;
+    font-weight: 400;
+}
+
+h4,
+h5,
+h6{
+    color: #59C8E2;
+    font-weight: 400;
+}
+
+.sidebar{
+    border-right: 1px solid #FBB31B;
+}
+
+.intro{
+    text-align: center;
+}
+
+.close-details{
+    background: transparent;
+    border: none;
+    font-size: 3rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.results-list,
+.complete-list{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.results-list li,
+.complete-list li{
+    margin-left: 0;
+    padding: 2rem 1rem;
+    border-bottom: 1px solid black;
+}
+
+.results-list li:last-of-type,
+.complete-list li:last-of-type{
+    border-bottom: none;
+}
+
+.results-list li p,
+.complete-list li p{
+    margin-bottom: 0;
+}

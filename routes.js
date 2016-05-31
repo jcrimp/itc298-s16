@@ -2,7 +2,7 @@ module.exports = function(app){
     var Album = require('./models/album.js');
     
     app.get('/', function(req, res){
-        Album.find({}, function(err, albums){
+        /*Album.find({}, function(err, albums){
             if(err) throw err;
             var context = {
                 albums: albums.map(function(album){
@@ -18,8 +18,11 @@ module.exports = function(app){
                 })
             };
             res.render('home', context);
-        });
+        });*/
         
+        //res.render('a8home', {layout: false});
+        res.sendfile(html_dir + 'home.html');
+
     });
     
     app.get('/about', function(req, res){
