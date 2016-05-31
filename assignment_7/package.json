@@ -1,0 +1,26 @@
+{
+  "name": "itc298",
+  "version": "1.0.0",
+  "description": "test project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcrimp/itc298-s16.git"
+  },
+  "author": "Jenny Crimp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jcrimp/itc298-s16/issues"
+  },
+  "homepage": "https://github.com/jcrimp/itc298-s16#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.4.16"
+  }
+}

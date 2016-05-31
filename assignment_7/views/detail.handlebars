@@ -1,0 +1,70 @@
+{{#if updateSuccess}}
+<h2>Update Successful!</h2>
+{{/if}}
+{{#if alreadyExists}}
+<h2>Update failed</h2>
+<p>Al album with that name already exists. To change the album name, please choose a unique name.</p>
+{{/if}}
+<h2>Album Details</h2>
+<h3>{{album.name}}</h3>
+<p>Artist: {{album.artist}}</p>
+<p>Release Date: {{#if album.release}}{{prettyDate album.release}}{{/if}}</p>
+<p>Number of Tracks: {{album.tracksNum}}</p>
+{{#if album.inStock}}
+<p>Now in stock!</p>
+{{else}}
+<p>Sorry, this album isn't in stock.</p>
+{{/if}}
+<p><button type="button" class="btn btn-default show-form-button">Update</button></p>
+<form role="form" action="/update" method="POST" class="update-form form-horizontal hide">
+    <input type="hidden" name="id" value="{{album._id}}" />
+    <div class="form-group">
+        <label for="addAlbumName" class="col-sm-2">Album Name</label>
+        <div class="col-sm-10">
+            <input type="text"
+            id="addAlbumName" name="addAlbumName" class="form-control" value="{{album.name}}" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="addArtist" class="col-sm-2">Artist</label>
+        <div class="col-sm-10">
+            <input type="text"
+            id="addArtist" name="addArtist" class="form-control" value="{{album.artist}}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="addRelease" class="col-sm-2">Release Date</label>
+        <div class="col-sm-3">
+            <input type="date"
+            id="addRelease" name="addRelease" pattern="\d{1,2}-\d{1,2}-\d{4}" class="form-control" value="{{#if album.release}}{{shortDate album.release}}{{/if}}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="addArtist" class="col-sm-2">Number of Tracks</label>
+        <div class="col-sm-2">
+            <input type="number"
+            id="addTracks" name="addTracks" min="1" max="100" class="form-control" value="{{album.tracksNum}}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2">In Stock?</label>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="addInStock" value="true" {{#if album.inStock}}checked="checked"{{/if}}>&nbsp;Yes</label>
+            <label class="radio-inline"><input type="radio" name="addInStock" value="false" {{#unless album.inStock}}checked="checked"{{/unless}}>&nbsp;No</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-10">
+            <p><input type="submit" class="btn btn-warning" id="update" value="Update"/></p>
+        </div>
+    </div>
+</form>
+<form role="form" action="/delete" method="POST" class="delete-form form-horizontal">
+    <input type="hidden" name="deleteId" value="{{album._id}}" />
+    <div class="form-group">
+        <div class="col-sm-10">
+            <p><input type="submit" class="btn btn-danger" id="delete" value="Delete"/></p>
+        </div>
+    </div>
+</form>
+<p>
