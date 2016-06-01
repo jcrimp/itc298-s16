@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Album List</title>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -40,37 +40,25 @@
                 return $scope.myAlbums.length;
             };
             
-            $scope.getDetails = function(name){
-                //find name in array, get index, set detailAlbum to that item in the array
-                var found = $scope.myAlbums.find(function(album){
-                    return album.name === name;
-                });
-                if(found){
-                    $scope.detailAlbum = found;
-                    $scope.showDetails = true;
-                }
-                
+            $scope.getDetails = function(item){
+                $scope.detailAlbum = item;
+                $scope.showDetails = true;
             };
             
             $scope.hideDetails = function(){
                 $scope.showDetails = false;
             };
-            
-            // sample method
-            $scope.searchAlbums = function(){ 
-                // code here to update any variables referenced by the view template 
-            };
         }]);
         
         listApp.filter('searchFor', function(){
             return function(arr, searchString){
-                /*if(!searchString){
-                return [];
-                }*/
+                if(!searchString){
+                return arr;
+                }
                 var result = [];
                 searchString = searchString.toLowerCase();
                 angular.forEach(arr, function(album){
-                    if(album.name.toLowerCase().indexOf(searchString) !== -1){
+                    if((album.name.toLowerCase().indexOf(searchString) !== -1) || (album.artist.toLowerCase().indexOf(searchString) !== -1)){
                         result.push(album);
                     }
                 });
@@ -95,26 +83,27 @@
                     </form>
                     
                     <div class="search-results" ng-if="searchTerm">
-                        <h3>Searching for <span ng-bind="searchTerm"></span></h3>
-                        <p>Number of results: <span>{{filtered.length}}</span></p>
-                        <h4>Search results: </h4>
-                        <ul class="results-list">
-                            <li ng-repeat="a in myAlbums | searchFor:searchTerm as filtered" >
-                                <p ng-click="getDetails(a.name)">{{a.name}} by {{a.artist}}</p>
-                                
-                            </li>
-                        </ul>
+                        <h4>Search results for "<span ng-bind="searchTerm"></span>"</h4>
+                        
                     </div>
+                    <p>Showing <span>{{filtered.length}}</span> out of {{myAlbums.length}} total albums</p>
+                    <ul class="results-list">
+                        <li ng-repeat="a in myAlbums | searchFor:searchTerm as filtered" >
+                            <p ng-click="getDetails(a)">{{a.name}} by {{a.artist}}</p>
+                            
+                        </li>
+                    </ul>
+
                     
-                    <hr>
+                    <!--<hr>
                     <h4>All Albums:</h4>
                     <p>Total Albums: {{albumCount()}}</p>
                     <ul class="complete-list">
                         <li ng-repeat="x in myAlbums">
-                            <p>{{x.name + ' by ' + x.artist}} - <span ng-click="getDetails(x.name)">Show details</span></p>
+                            <p>{{x.name + ' by ' + x.artist}} - <span ng-click="getDetails(x)">Show details</span></p>
                             
                         </li>
-                    </ul>
+                    </ul>-->
                 </div><!--end sidebar column-->
                 <div class="detail-container col-sm-8">
                     <div ng-if="!showDetails" class="intro">
