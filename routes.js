@@ -1,8 +1,9 @@
 module.exports = function(app){
     var Album = require('./models/album.js');
+    var html_dir = './public/';
     
     app.get('/', function(req, res){
-        /*Album.find({}, function(err, albums){
+        Album.find({}, function(err, albums){
             if(err) throw err;
             var context = {
                 albums: albums.map(function(album){
@@ -18,15 +19,19 @@ module.exports = function(app){
                 })
             };
             res.render('home', context);
-        });*/
+        });
         
         //res.render('a8home', {layout: false});
-        res.sendfile(html_dir + 'home.html');
+        //res.sendfile(html_dir + 'home.html');
 
     });
     
     app.get('/about', function(req, res){
         res.render('about');
+    });
+    
+    app.get('/angular', function(req, res){
+        res.sendfile(html_dir + 'angular.html');
     });
     
     app.get('/album/:myAlbum', function(req, res){
@@ -166,5 +171,63 @@ module.exports = function(app){
             }
         });
     });
-
+    
+    app.post('/api/update', function(req, res){
+        //check if body has id
+        console.log('Request: ' + req);
+        console.log('Body: ' + req.body);
+        console.log('ID: ' + req.body.id);
+        if(req.body.id){
+            //if body has id, make sure addAlbumName doesn't already exist in a document other than the current one.
+            var albumNameToAdd = req.body.addAlbumName.toString();
+            var myPattern = new RegExp(albumNameToAdd, 'i');
+            Album.findOne({_id: {$ne:req.body.id}, name: {$regex:myPattern}}, function(err, album){
+                if(err) throw err;
+                if(album){
+                    //if it is already there, set alreadyExists to true, and render the template with the old album name
+                    res.locals.alreadyExists = true;
+                    Album.findOne({_id:req.body.id}, function(err, album){
+                        if(err) throw err;
+                        res.json({"result": "alreadyExists"});
+                    }); 
+                }
+                else{
+                    //if addAlbumName doesn't already exist, set update success message to true, update the document with that id, and render detail page with the updated document.
+                    Album.findOne({_id:req.body.id}, function(err, album){
+                        if(err) throw err;
+                        album.name = req.body.addAlbumName; 
+                        album.artist = req.body.addArtist;
+                        album.release =  req.body.addRelease;
+                        album.tracksNum = req.body.addTracks;
+                        album.inStock = req.body.addInStock;
+                        album.slug = albumNameToAdd.toLowerCase().replace(" ", "-");
+                        album.save(function(err){
+                            if(err) throw err;
+                            console.log(album);
+                            res.json({"result": "updated", album});
+                        });
+                    });
+                }
+            });
+        }
+        else{
+            //if body doesn't have ID, you shouldn't have even gotten this far. 404 error.
+            res.type('text/plain');
+            res.status(404).send('404 - There was a problem updating the data');
+        } 
+    });
+    
+    
+    app.post('/api/delete', function(req, res){
+        console.log(req.body.deleteID)
+        Album.findById(req.body.deleteID, function(err, album){
+            if(err) throw err;
+            album.remove(function(err){
+                if(err) throw err;
+                //res.locals.deleteSuccess = true;
+                //res.locals.deletedAlbum = album.name;
+                res.json({"result": "deleted", album});
+            });
+        });
+    });
 };

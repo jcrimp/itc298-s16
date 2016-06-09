@@ -18,6 +18,7 @@ var app = express();
 
 
 app.use(express.static('public'));
+app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use('/api', require('cors')());
 //var html_dir = './public/';
