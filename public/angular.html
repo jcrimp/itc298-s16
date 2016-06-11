@@ -27,13 +27,13 @@
         listApp.controller('ListController', ['$scope', '$http', function($scope, $http) {
             
           $http.get("/api/albums").success(function(data){
-                //console.log(data);
                 $scope.myAlbums = data;
             }).error(function(data){
                 console.log('Error: ' + data);
             });
             
             $scope.detailAlbum = {};
+            $scope.addFormData = {};
             $scope.formData = {};
             $scope.deleteData = {};
             
@@ -43,42 +43,38 @@
                 return $scope.myAlbums.length;
             };
             
-            $scope.getDetails = function(item){
-                $scope.detailAlbum = item;
-                $scope.showDetails = true; 
-                
-                $scope.formData.id = item._id;
-                $scope.formData.addAlbumName = item.name;
-                $scope.formData.addArtist = item.artist;
-                $scope.formData.addRelease = new Date(item.release);
-                $scope.formData.addTracks = item.tracksNum;
-                $scope.formData.addInStock = item.inStock;
-                
-                $scope.deleteData.deleteID = item._id;
-                
-                //when switching to a different detail album, hide forms and messages - back to simple view
-                $scope.updateSuccess = false;
-                $scope.alreadyExists = false;
-                $scope.displayForms = false;
+            $scope.processAddForm = function(){
+                $http.post('/api/add', $scope.addFormData).then(function successCallback(response){
+                    if(response.data.result === "added"){
+                        //show details for new album
+                        $scope.detailAlbum = response.data.album;
+                        $scope.showDetails = true;
+                        $scope.displayAddForm = false;
+                        $scope.addSuccessMessage = true;
+                        $scope.myAlbums.push(response.data.album);
+                    }
+                    else if(response.data.result === "alreadyExists"){
+                        $scope.alreadyUsed = true;
+                    }
+                }, function errorCallback(response){
+                    console.log('Error: ' + response.data);
+                });
             };
             
             $scope.processUpdateForm = function(){
                 //hide update success/problem messages when re-updating the same album
                 $scope.updateSuccess = false;
                 $scope.alreadyExists = false;
-                //console.log($scope.formData);
+                $scope.addSuccessMessage = false;
                 $http.post('/api/update', $scope.formData).then(function successCallback(response) { 
-                    //$scope.updateResult = response.data;
                     if(response.data.result === "updated"){
                         $scope.updateSuccess = true;
                         $scope.updatedAlbum = response.data.album;
-                        //console.log('Updated album: ' + $scope.updatedAlbum.name);
                         
                         var found = $scope.myAlbums.find(function(item){
                             var itemID = item._id;
                             return itemID === $scope.updatedAlbum._id;
                         });
-                        //console.log('Album to replace: ' + found.name);
                         
                         if(found){
                             //album already in array, replace it with updated album
@@ -86,7 +82,6 @@
                             $scope.myAlbums.splice(foundIndex, 1, $scope.updatedAlbum);
                             //set detailAlbum to updatedAlbum
                             $scope.detailAlbum = response.data.album;
-                            //console.log('replaced');
                         }
                     }
                     else if(response.data.result === "alreadyExists"){
@@ -102,7 +97,7 @@
             $scope.processDeleteForm = function(){
                 $scope.updateSuccess = false;
                 $scope.alreadyExists = false;
-                console.log($scope.deleteData);
+                $scope.addSuccessMessage = false;
                 $http.post('/api/delete', $scope.deleteData).then(function successCallback(response){
                     if(response.data.result === "deleted"){
                         $scope.deleteSuccess = true;
@@ -123,25 +118,69 @@
                             $scope.showDetails = false;
                         }
                     }
-                }, function errorCallback(){
-                    
+                }, function errorCallback(response){
+                    console.log('Error: ' + response.data);
                 });
             };
             
-            $scope.showUpdateForm = function(){
-                $scope.displayForms = true;
+            $scope.getDetails = function(item){
+                $scope.detailAlbum = item;
+                $scope.showDetails = true; 
+                
+                $scope.formData.id = item._id;
+                $scope.formData.addAlbumName = item.name;
+                $scope.formData.addArtist = item.artist;
+                $scope.formData.addRelease = new Date(item.release);
+                $scope.formData.addTracks = item.tracksNum;
+                $scope.formData.addInStock = item.inStock;
+                
+                $scope.deleteData.deleteID = item._id;
+                
+                //when switching to a different detail album, hide forms and messages - back to simple view
+                $scope.addSuccessMessage = false;
+                $scope.updateSuccess = false;
+                $scope.alreadyExists = false;
+                $scope.displayForms = false;
+                $scope.displayAddForm = false;
             };
             
             $scope.hideDetails = function(){
                 $scope.showDetails = false;
             };
             
+            $scope.showUpdateForm = function(){
+                $scope.displayForms = true;
+            };
+            
             $scope.hideSuccessMessage = function(){
                 $scope.updateSuccess = false;
-            }
+            };
             
             $scope.hideExistsMessage = function(){
                 $scope.alreadyExists = false;
+            };
+            
+            $scope.hideAddMessage = function(){
+                $scope.addSuccessMessage = false;
+            };
+            
+            $scope.showAddForm = function(){
+                $scope.displayAddForm = true;
+                $scope.showDetails = false;
+                $scope.addFormData = {};
+            };
+            
+            $scope.hideAddForm = function(){
+                $scope.displayAddForm = false;
+                $scope.alreadyUsed = false;
+            };
+            
+            $scope.hideUsedMessage = function(){
+                $scope.alreadyUsed = false;
+            }
+            
+            $scope.hideDeleteSuccess = function(){
+                $scope.deleteSuccess = false;
             }
             
         }]);
@@ -171,6 +210,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="sidebar col-sm-4">
+                    <h3>Add a new album</h3>
+                    <button class="btn btn-warning" ng-click="showAddForm()">Add</button>
                     <form>
                         <div class="form-group">
                             <label for="search"><h3>Search Albums</h3></label>
@@ -189,32 +230,80 @@
                             
                         </li>
                     </ul>
-
-                    
-                    <!--<hr>
-                    <h4>All Albums:</h4>
-                    <p>Total Albums: {{albumCount()}}</p>
-                    <ul class="complete-list">
-                        <li ng-repeat="x in myAlbums">
-                            <p>{{x.name + ' by ' + x.artist}} - <span ng-click="getDetails(x)">Show details</span></p>
-                            
-                        </li>
-                    </ul>-->
                 </div><!--end sidebar column-->
+                
                 <div class="detail-container col-sm-8">
-                    <div ng-if="!showDetails" class="intro">
+                    <div ng-if="!showDetails && !displayAddForm" class="intro">
+                        <div class="delete-success-message" ng-if="deleteSuccess">
+                            <h2>{{deletedAlbum.name}} deleted successfully</h2>
+                            <button type="button" class="close-details" aria-label="Close" ng-click="hideDeleteSuccess()"><span aria-hidden="true">&times;</span></button>
+                        </div>
                         <h1>Vinyl Library</h1>
                         <h4>Create a catalog of your albums, and keep your wishlist updated.</h4>
-                        <div ng-if="deleteSuccess">
-                            <h2>{{deletedAlbum.name}} deleted successfully</h2>
+                        
+                        <p><button type="button" ng-click="showAddForm()" class="btn btn-default show-form-button">Add a new album</button></p>
+                    </div>
+                    
+                    <button type="button" class="close-details" aria-label="Close" ng-if="displayAddForm" ng-click="hideAddForm()"><span aria-hidden="true">&times;</span></button>
+                    <div class="add-form-container" ng-if="displayAddForm">
+                        <div class="already-exists-message" ng-if="alreadyUsed">
+                            <h5>Unable to add album - an album with that name already exists. Please use a unique name.</h5>
+                            <button type="button" class="close-details" aria-label="Close" ng-click="hideUsedMessage()"><span aria-hidden="true">&times;</span></button>
                         </div>
+                        
+                        <h2>Add a new album</h2>
+                        <form role="form" class="update-form form-horizontal">
+                            <input type="hidden" name="id"  ng-model="formData.id"/>
+                            <div class="form-group">
+                                <label for="addAlbumName" class="col-sm-2">Album Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text"
+                                           id="addAlbumName" name="addAlbumName" class="form-control" ng-model="addFormData.addAlbumName" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addArtist" class="col-sm-2">Artist</label>
+                                <div class="col-sm-10">
+                                    <input type="text"
+                                           id="addArtist" name="addArtist" class="form-control" ng-model="addFormData.addArtist">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addRelease" class="col-sm-2">Release Date</label>
+                                <div class="col-sm-4">
+                                    <input type="date"
+                                           id="addRelease" name="addRelease" class="form-control" ng-model="addFormData.addRelease">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addArtist" class="col-sm-2">Number of Tracks</label>
+                                <div class="col-sm-2">
+                                    <input type="number"
+                                           id="addTracks" name="addTracks" min="1" max="100" class="form-control" ng-model="addFormData.addTracks">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2">In Stock?</label>
+                                <div class="col-sm-10">
+                                    <label class="radio-inline"><input type="radio" name="addInStock" ng-model="addFormData.addInStock" ng-value="true">&nbsp;Yes</label>
+                                    <label class="radio-inline"><input type="radio" name="addInStock" ng-model="addFormData.addInStock" ng-value="false">&nbsp;No</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <p><button class="btn btn-warning" ng-click="processAddForm()"/>Submit</button></p>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     
                     <button type="button" class="close-details" aria-label="Close" ng-if="showDetails" ng-click="hideDetails()"><span aria-hidden="true">&times;</span></button>
                     <div class="album-detail" ng-if="showDetails">
-                        
-                        <div class="update-success-message" ng-if="updateSuccess">
-                        
+                        <div class="add-success-message" ng-if="addSuccessMessage">
+                            <h2>Album Successfully Added!</h2>
+                            <button type="button" class="close-details" aria-label="Close" ng-click="hideAddMessage()"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="update-success-message" ng-if="updateSuccess">     
                             <h2>Album Successfully Updated!</h2>
                             <button type="button" class="close-details" aria-label="Close" ng-click="hideSuccessMessage()"><span aria-hidden="true">&times;</span></button>
                         </div>
@@ -276,25 +365,17 @@
                                         <p><button class="btn btn-warning" id="update" value="Update" ng-click="processUpdateForm()"/>Update</button></p>
                                     </div>
                                 </div>
-                                <!--<div>
-                                    <pre>
-                                        {{formData}}
-                                    </pre>
-                                </div>-->
                             </form>
+            
                             <form role="form" class="delete-form form-horizontal">
                                 <input type="hidden" name="deleteId" ng-model="deleteData.deleteID"/>
                                 <div class="form-group">
                                     <div class="col-sm-10">
                                         <p><button class="btn btn-danger" id="delete" value="Delete" ng-click="processDeleteForm()">Delete</button></p>
                                     </div>
-                                    <div>
-                                        <pre>
-                                            {{deleteData}}
-                                        </pre>
-                                    </div>
                                 </div>
                             </form>
+            
                         </div>
                     </div>
                 </div><!-- end detail-container column-->

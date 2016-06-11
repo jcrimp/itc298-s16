@@ -37,6 +37,7 @@ h6{
     top: 0;
     right: .5em;
     padding: 0;
+    z-index: 99;
 }
 
 .results-list,
@@ -63,13 +64,17 @@ h6{
     margin-bottom: 0;
 }
 
-.update-success-message{
+.update-success-message, 
+.add-success-message,
+.delete-success-message{
     border-bottom: 1px solid #FBB31B;
     display: inline-block;
     position: relative;
 }
 
-.update-success-message .close-details{
+.update-success-message .close-details,
+.add-success-message .close-details,
+.delete-success-message .close-details{
     right: -1em;
     top: 0;
     bottom: 0;
@@ -84,6 +89,21 @@ h6{
     position: relative;
 }
 .already-exists-message .close-details{
+    right: -1em;
+    top: 0;
+    bottom: 0;
+    line-height: 1;
+    font-size: 1em;
+    color: #59C8E2;
+}
+
+.already-used-message{
+    border-bottom: 1px solid #59C8E2;
+    display: inline-block;
+    position: relative;
+}
+
+.already-used-message .close-details{
     right: -1em;
     top: 0;
     bottom: 0;

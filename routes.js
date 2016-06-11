@@ -172,6 +172,36 @@ module.exports = function(app){
         });
     });
     
+    app.post('/api/add', function(req, res){       
+        var albumNameToAdd = req.body.addAlbumName.toString();
+        var myPattern = new RegExp(albumNameToAdd, 'i');
+        //first, search for the album that's being added to see if it's already there
+        Album.findOne({name: {$regex:myPattern}}, function(err, album){
+            if(err) throw err;
+            //if it is already there, set add success message to false, and render the template with the existing album name
+            if(album){
+                res.locals.success = false;
+                res.json({"result": "alreadyExists"});
+            }
+            //if it's not already there, set add success message to true, add the new album, and render the 
+            else{
+                res.locals.success = true;
+                var newAlbum = new Album({
+                    name: req.body.addAlbumName, 
+                    artist:req.body.addArtist,
+                    release: req.body.addRelease,
+                    tracksNum: req.body.addTracks,
+                    inStock: req.body.addInStock,
+                    slug: albumNameToAdd.toLowerCase().replace(" ", "-")
+                }).save(function(err, album){
+                    if(err) throw err;
+                    //console.log(album);
+                    res.json({"result": "added", album});
+                });
+            }
+        })
+    });
+    
     app.post('/api/update', function(req, res){
         //check if body has id
         console.log('Request: ' + req);
